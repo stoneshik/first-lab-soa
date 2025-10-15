@@ -94,7 +94,11 @@ paths:
       parameters:
         - name: sort
           in: query
-          description: Array of fields that are used for sorting. The minus sign means sorting in descending order. Without minus sign means sorting in ascending order. If ascdending and descending order are provided for one field (with and without minus), an error response will be returned
+          description: >
+            Array of fields that are used for sorting.<br>
+            The minus sign means sorting in descending order.<br>
+            Without minus sign means sorting in ascending order.<br>
+            If ascdending and descending order are provided for one field (with and without minus), an error response will be returned
           required: false
           explode: true
           schema:
@@ -132,7 +136,18 @@ paths:
         - name: filter
           in: query
           required: false
-          description: Array of field names used for filtering. First comes the name of the field by which the filtering takes place and the filtering method is indicated in square brackets.<br>Available sorting methods:<br>1) eq - equals,<br>2) ne - not equals,<br>3) gt - greater than,<br>4) lt - less than,<br>5) lte - less than or equls,<br>6) gte - greater than or equals<br>There must be a colon after the method, followed by the value to sort<br>If value is incorrect, an error response will be returned
+          description: >
+            Array of field names used for filtering.<br>
+            First comes the name of the field by which the filtering takes place and the filtering method is indicated in square brackets.<br>
+            Available sorting methods:<br>
+            1) eq - equals,<br>
+            2) ne - not equals,<br>
+            3) gt - greater than,<br>
+            4) lt - less than,<br>
+            5) lte - less than or equls,<br>
+            6) gte - greater than or equals<br>
+            There must be a colon after the method, followed by the value to sort<br>
+            If value is incorrect, an error response will be returned
           style: deepObject
           explode: true
           schema:
@@ -207,7 +222,9 @@ paths:
     # Additional operation
     delete:
       summary: Delete one flat by filter
-      description: Deletes one (any) Flat object that matches the specified criteria. If multiple matching records are found, the first matching record is deleted.
+      description: >
+        Deletes one (any) Flat object that matches the specified criteria.<br>
+        If multiple matching records are found, the first matching record is deleted.
       operationId: deleteOneFlatByFilter
       parameters:
         - name: houseName
@@ -296,7 +313,7 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/Error'
-  
+
   # CRUD operations by id
   /flats/{id}:
     get:
@@ -523,7 +540,7 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/Error'
-  
+
   # Additional operations
   /lab-works/amount/height:
     get:
@@ -728,7 +745,7 @@ components:
         - pageSize
         - totalPages
         - totalAmount
-    
+
     Coordinates:
       type: object
       nullable: false

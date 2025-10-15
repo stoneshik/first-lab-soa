@@ -40,7 +40,7 @@ paths:
         - Agency
       responses:
         '200':
-          description: Succesfully find suitable flat
+          description: Successfully find suitable flat
           content:
             application/xml:
               schema:
