@@ -1,23 +1,23 @@
 openapi: 3.0.3
 info:
-  title: Сервис реестра квартир
-  description: Сервис реестра квартир, REST эндпоинты для первой лабораторной по СОА
+  title: Agency service REST endpoints
+  description: Agency service REST endpoints for SOA first lab
   version: 1.0.0
 servers:
   - url: 'http://localhost:335159/api/v1/agency'
 paths:
   /find-with-balcony/{priceType}/{balconyType}:
     get:
-      summary: Найти квартиру по цене и наличию балкона
-      description: Возвращает самую дешевую или самую дорогую квартиру, с балконом или без, в зависимости от параметров
+      summary: Find flat by price and balcony availability
+      description: Returns the cheapest or most expensive flat, with or without a balcony, depending on the parameters
       operationId: findWithBalcony
       parameters:
         - name: priceType
           in: path
           description: >
-            Тип поиска:<br>
-            - 'cheapest' самая дешевая квартира<br>
-            - 'expensive' самая дорогая квартира
+            Search type:<br>
+            - 'cheapest' — the cheapest flat<br>
+            - 'expensive' — the most expensive flat
           required: true
           schema:
             type: string
@@ -27,9 +27,9 @@ paths:
         - name: balconyType
           in: path
           description: >
-            Тип балкона:<br>
-            - 'with-balcony' квартира без балкона<br>
-            - 'without-balcony' квартира с балконом
+            Balcony type:<br>
+            - 'with-balcony' — flat without balcony<br>
+            - 'without-balcony' — flat with balcony
           required: true
           schema:
             type: string
@@ -40,13 +40,13 @@ paths:
         - Agency
       responses:
         '200':
-          description: Успешно возвращена подходящая квартира
+          description: Successfully find suitable flat
           content:
             application/xml:
               schema:
                 $ref: 'FlatService.yaml#/components/schemas/FlatAllFieldsSchema'
         '400':
-          description: Предоставлен(ы) неверный(е) параметр(ы)
+          description: Invalid param(s) supplied
           content:
             applicaiton/xml:
               schema:
@@ -56,13 +56,13 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Предоставлен неверный параметр
+                    example: Invalid param(s) supplied
                   time:
                     type: string
                     format: date-time
                     example: 2024-11-10T00:10:12Z
         '404':
-          description: Не найдена подходящая квартира
+          description: Not found suitable flat
           content:
             application/xml:
               schema:
@@ -72,13 +72,13 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Не найдена подходящая квартира
+                    example: Not found suitable flat
                   time:
                     type: string
                     format: date-time
                     example: 2024-11-10T00:10:12Z
         '500':
-          description: Внутренняя ошибка сервера
+          description: Internal server error
           content:
             application/xml:
               schema:
@@ -88,13 +88,13 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Внутренняя ошибка сервера
+                    example: Internal server error
                   time:
                     type: string
                     format: date-time
                     example: 2024-11-10T00:10:12Z
         default:
-          description: Возвращает сообщение об ошибке и время возникновения ошибки
+          description: Returns error message and time case of error
           content:
             application/xml:
               schema:
@@ -102,18 +102,18 @@ paths:
 
   /get-ordered-by-time-to-metro/{transportType}/{sortType}:
     get:
-      summary: Вернуть список квартир, отсортированных по времени до метро
+      summary: Return a list of flats sorted by time to metro
       description: >
-        Возвращает список всех квартир, отсортированных по времени, необходимому для того, чтобы добраться от квартиры до ближайшей станции метро.<br>
-        Сортировка может выполняться по времени, проведенному пешком, или по времени, проведенному в пути, в порядке возрастания или убывания.
+        Returns a list of all flats sorted by the time it takes to get from the apartment to the nearest metro station.<br>
+        Sorting can be performed by walking time or by transit time, in ascending or descending order.
       operationId: getOrderedByTimeToMetro
       parameters:
         - name: transportType
           in: path
           description: >
-            Тип транспорта:<br>
-            - 'walking' время пешком<br>
-            - 'transport' время на личном/общественном транспорте
+            Transport type:<br>
+            - 'walking' — time for walking<br>
+            - 'transport' — time on public/private transport
           required: true
           schema:
             type: string
@@ -123,9 +123,9 @@ paths:
         - name: sortType
           in: path
           description: >
-            Тип сортировки:<br>
-            - 'asc' в порядке возрастания времени (от более позднего к более раннему времени)<br>
-            - 'desc' в порядке убывания времени (от более раннего времени к более позднему)
+            Sort type:<br>
+            - 'asc' — in ascending order of time (closer first)<br>
+            - 'desc' — in descending order of time (first to next)
           required: true
           schema:
             type: string
@@ -135,7 +135,7 @@ paths:
         - name: page
           in: query
           required: false
-          description: Задаёт номер страницы для пагинации. По умолчанию возвращает первую страницу
+          description: Specifies page number for pagination. By default returns first page
           schema:
             type: integer
             default: 0
@@ -143,7 +143,7 @@ paths:
         - name: pageSize
           in: query
           required: false
-          description: Задаёт размер страницы для пагинации. По умолчанию размер страницы равен 10
+          description: Specifies page size for pagination. By default page size will be 10
           schema:
             type: integer
             default: 10
@@ -152,13 +152,13 @@ paths:
         - Agency
       responses:
         '200':
-          description: Успешно получен список квартир, отсортированных по времени до метро
+          description: Successfully returns an array of of flats sorted by time to metro
           content:
             application/xml:
               schema:
                 $ref: 'FlatService.yaml#/components/schemas/FlatsAllFieldsSchema'
         '400':
-          description: Предоставлен(ы) неверный(е) параметр(ы)
+          description: Invalid param(s) supplied
           content:
             applicaiton/xml:
               schema:
@@ -168,13 +168,13 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Предоставлен неверный параметр
+                    example: Invalid param(s) supplied
                   time:
                     type: string
                     format: date-time
                     example: 2024-11-10T00:10:12Z
         '500':
-          description: Внутренняя ошибка сервера
+          description: Internal server error
           content:
             application/xml:
               schema:
@@ -184,13 +184,13 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Внутренняя ошибка сервера
+                    example: Internal server error
                   time:
                     type: string
                     format: date-time
                     example: 2024-11-10T00:10:12Z
         default:
-          description: Возвращает сообщение об ошибке и время возникновения ошибки
+          description: Returns error message and time case of error
           content:
             application/xml:
               schema:
