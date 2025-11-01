@@ -16,8 +16,8 @@ paths:
           in: path
           description: >
             Search type:<br>
-            - 'cheapest' — the cheapest flat<br>
-            - 'expensive' — the most expensive flat
+            - 'cheapest' - the cheapest flat<br>
+            - 'expensive' - the most expensive flat
           required: true
           schema:
             type: string
@@ -28,8 +28,8 @@ paths:
           in: path
           description: >
             Balcony type:<br>
-            - 'with-balcony' — flat without balcony<br>
-            - 'without-balcony' — flat with balcony
+            - 'with-balcony' - flat without balcony<br>
+            - 'without-balcony' - flat with balcony
           required: true
           schema:
             type: string
@@ -112,8 +112,8 @@ paths:
           in: path
           description: >
             Transport type:<br>
-            - 'walking' — time for walking<br>
-            - 'transport' — time on public/private transport
+            - 'walking' - time for walking<br>
+            - 'transport' - time on public/private transport
           required: true
           schema:
             type: string
@@ -124,8 +124,8 @@ paths:
           in: path
           description: >
             Sort type:<br>
-            - 'asc' — in ascending order of time (closer first)<br>
-            - 'desc' — in descending order of time (first to next)
+            - 'asc' - in ascending order of time (closer first)<br>
+            - 'desc' - in descending order of time (first to next)
           required: true
           schema:
             type: string

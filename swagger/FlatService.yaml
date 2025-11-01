@@ -134,11 +134,11 @@ paths:
             - `interval` - open interval `(min, max)`<br>
             - `range` - closed range `[min, max]`<br>
             Examples:<br>
-            - `area[gt]:10` — area > 10<br>
+            - `area[gt]:10` - area > 10<br>
             - `area[interval]:10,20` - 10 < area < 20<br>
             - `numberOfRooms[range]:1,3` - 1 ≤ rooms ≤ 3<br>
             If operation is `interval` or `range`, value **must** contain 2 numbers separated by comma.<br>
-            Otherwise — one value. Incorrect value returns 400.
+            Otherwise - one value. Incorrect value returns exception with code 400.
           style: deepObject
           explode: true
           schema:
