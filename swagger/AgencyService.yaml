@@ -44,7 +44,7 @@ paths:
           content:
             application/xml:
               schema:
-                $ref: 'FlatService.yaml#/components/schemas/FlatAllFieldsSchema'
+                $ref: 'FlatService.yaml#/components/schemas/flatAllFieldsSchema'
         '400':
           description: Invalid param(s) supplied
           content:
@@ -52,7 +52,7 @@ paths:
               schema:
                 type: object
                 xml:
-                  name: Error
+                  name: error
                 properties:
                   message:
                     type: string
@@ -68,7 +68,7 @@ paths:
               schema:
                 type: object
                 xml:
-                  name: Error
+                  name: error
                 properties:
                   message:
                     type: string
@@ -84,7 +84,7 @@ paths:
               schema:
                 type: object
                 xml:
-                  name: Error
+                  name: error
                 properties:
                   message:
                     type: string
@@ -98,7 +98,7 @@ paths:
           content:
             application/xml:
               schema:
-                $ref: 'FlatService.yaml#/components/schemas/Error'
+                $ref: 'FlatService.yaml#/components/schemas/error'
 
   /get-ordered-by-time-to-metro/{transportType}/{sortType}:
     get:
@@ -156,7 +156,7 @@ paths:
           content:
             application/xml:
               schema:
-                $ref: 'FlatService.yaml#/components/schemas/FlatsAllFieldsSchema'
+                $ref: 'FlatService.yaml#/components/schemas/flatsAllFieldsSchema'
         '400':
           description: Invalid param(s) supplied
           content:
@@ -164,7 +164,7 @@ paths:
               schema:
                 type: object
                 xml:
-                  name: Error
+                  name: error
                 properties:
                   message:
                     type: string
@@ -180,7 +180,7 @@ paths:
               schema:
                 type: object
                 xml:
-                  name: Error
+                  name: error
                 properties:
                   message:
                     type: string
@@ -194,4 +194,4 @@ paths:
           content:
             application/xml:
               schema:
-                $ref: 'FlatService.yaml#/components/schemas/Error'
+                $ref: 'FlatService.yaml#/components/schemas/error'
