@@ -7,7 +7,7 @@ servers:
   - url: 'http://localhost:335159/api/v1/'
 paths:
   # CRUD operations
-  /flats/:
+  /flats:
     post:
       summary: Add new flat
       operationId: addFlat
@@ -35,15 +35,18 @@ paths:
                 xml:
                   name: error
                 properties:
-                  messages:
+                  message:
+                    type: string
+                    example: Unprocessable entity
+                  violations:
                     type: array
                     items:
                       type: string
                       example: Flat field area equals or less than 0
                       xml:
-                        name: message
+                        name: violation
                     xml:
-                      name: messages
+                      name: violations
                       wrapped: true
                   time:
                     type: string
@@ -61,6 +64,17 @@ paths:
                   message:
                     type: string
                     example: Internal server error
+                  violations:
+                    type: array
+                    items:
+                      type: string
+                      example: Flat field area equals or less than 0
+                      xml:
+                        name: violation
+                    xml:
+                      name: violations
+                      wrapped: true
+                    default: []
                   time:
                     type: string
                     format: date-time
@@ -78,75 +92,64 @@ paths:
       parameters:
         - name: sort
           in: query
-          description: >
-            Array of fields that are used for sorting.<br>
-            The minus sign means sorting in descending order.<br>
-            Without minus sign means sorting in ascending order.<br>
-            If ascdending and descending order are provided for one field (with and without minus), an error response will be returned
+          description: |
+            Sorting parameters in the format `property,asc|desc`.
+            Multiple comma-separated sorts are supported.<br>
+            Available sorting fields:
+            - id
+            - name
+            - coordinates.id
+            - coordinates.x
+            - coordinates.y
+            - creationDate
+            - area
+            - numberOfRooms
+            - height
+            - view
+            - transport
+            - house.id
+            - house.name
+            - house.year
+            - house.numberOfFlatsOnFloor
           required: false
-          explode: true
           schema:
             type: array
             items:
               type: string
-              default: id
-              enum:
-                - id
-                - name
-                - coordinates.x
-                - coordinates.y
-                - creationDate
-                - area
-                - numberOfRooms
-                - height
-                - view
-                - transport
-                - house.name
-                - house.year
-                - house.numberOfFlatsOnFloor
-                - -id
-                - -name
-                - -coordinates.x
-                - -coordinates.y
-                - -creationDate
-                - -area
-                - -numberOfRooms
-                - -height
-                - -view
-                - -transport
-                - -house.name
-                - -house.year
-                - -house.numberOfFlatsOnFloor
+            default: ["name,asc"]
         - name: filter
           in: query
           required: false
           description: >
             Field filter list.<br>
-            Format (except interval and range): `field[operation]:value`.<br>
-            Format for interval and range: `field[operation]:min,max`<br>
+            Format (except interval and range): `field(operation)value`.<br>
+            Format for interval and range: `field(operation)min_max`<br>
+            Interval and range supports only numbers<br>
             Available operations:<br>
             - `eq` - equals<br>
             - `ne` - not equals<br>
             - `gt` - greater than (strict)<br>
             - `lt` - less than (strict)<br>
-            - `gte` - greater or equal<br>
-            - `lte` - less or equal<br>
+            - `gte` - greater than or equals<br>
+            - `lte` - less than or equals<br>
             - `interval` - open interval `(min, max)`<br>
             - `range` - closed range `[min, max]`<br>
             Examples:<br>
-            - `area[gt]:10` - area > 10<br>
-            - `area[interval]:10,20` - 10 < area < 20<br>
-            - `numberOfRooms[range]:1,3` - 1 ≤ rooms ≤ 3<br>
-            If operation is `interval` or `range`, value **must** contain 2 numbers separated by comma.<br>
-            Otherwise - one value. Incorrect value returns exception with code 400.
+            - `area(gt)10` - area > 10<br>
+            - `area(interval)10_20` - 10 < area < 20<br>
+            - `numberOfRooms(range)1_3` - 1 ≤ rooms ≤ 3<br>
+            If operation is `interval` or `range`, value **must** contain 2 numbers separated by `_`.<br>
+            Otherwise - one value. Incorrect value returns exception with code 400.<br>
+            pattern: ^([a-z]+)\\((eq|ne|gt|lt|gte|lte|interval|range)\\)(.+)$
           style: deepObject
           explode: true
           schema:
             type: array
             items:
               type: string
-              example: area[interval]:10,20
-              pattern: '^(?:(?:id|name|coordinates\.x|coordinates\.y|creationDate|area|numberOfRooms|height|view|transport|house\.name|house\.year|house\.numberOfFlatsOnFloor)\[(?:eq|ne|gt|lt|lte|gte)\]:[^,]+|(?:id|name|coordinates\.x|coordinates\.y|creationDate|area|numberOfRooms|height|view|transport|house\.name|house\.year|house\.numberOfFlatsOnFloor)\[(?:interval|range)\]:[^,]+,[^,]+)$'
+              example: "area(interval)10_20"
+            pattern: "^([a-z]+)\\((eq|ne|gt|lt|gte|lte|interval|range)\\)(.+)$"
+            default: ["area(interval)10_20"]
         - name: page
           in: query
           required: false
@@ -184,6 +187,17 @@ paths:
                   message:
                     type: string
                     example: Invalid param(s) supplied
+                  violations:
+                    type: array
+                    items:
+                      type: string
+                      example: Flat field area equals or less than 0
+                      xml:
+                        name: violation
+                    xml:
+                      name: violations
+                      wrapped: true
+                    default: []
                   time:
                     type: string
                     format: date-time
@@ -200,6 +214,17 @@ paths:
                   message:
                     type: string
                     example: Internal server error
+                  violations:
+                    type: array
+                    items:
+                      type: string
+                      example: Flat field area equals or less than 0
+                      xml:
+                        name: violation
+                    xml:
+                      name: violations
+                      wrapped: true
+                    default: []
                   time:
                     type: string
                     format: date-time
@@ -215,6 +240,7 @@ paths:
       summary: Delete one flat by filter
       description: >
         Deletes one (any) Flat object that matches the specified criteria.<br>
+        The value that is equal to the one specified in the filter is deleted.<br>
         If multiple matching records are found, the first matching record is deleted.
       operationId: deleteOneFlatByFilter
       parameters:
@@ -252,6 +278,33 @@ paths:
       responses:
         '204':
           description: Flat was successfully deleted
+        '400':
+          description: At least one parameter was not passed
+          content:
+            applicaiton/xml:
+              schema:
+                type: object
+                xml:
+                  name: error
+                properties:
+                  message:
+                    type: string
+                    example: At least one parameter was not passed
+                  violations:
+                    type: array
+                    items:
+                      type: string
+                      example: Flat field area equals or less than 0
+                      xml:
+                        name: violation
+                    xml:
+                      name: violations
+                      wrapped: true
+                    default: []
+                  time:
+                    type: string
+                    format: date-time
+                    example: 2024-11-10T00:10:12Z
         '404':
           description: Not found flat by filter param error
           content:
@@ -263,7 +316,18 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Not found flat by filter param error
+                    example: Not found flat by filter param
+                  violations:
+                    type: array
+                    items:
+                      type: string
+                      example: Flat field area equals or less than 0
+                      xml:
+                        name: violation
+                    xml:
+                      name: violations
+                      wrapped: true
+                    default: []
                   time:
                     type: string
                     format: date-time
@@ -280,6 +344,17 @@ paths:
                   message:
                     type: string
                     example: Internal server error
+                  violations:
+                    type: array
+                    items:
+                      type: string
+                      example: Flat field area equals or less than 0
+                      xml:
+                        name: violation
+                    xml:
+                      name: violations
+                      wrapped: true
+                    default: []
                   time:
                     type: string
                     format: date-time
@@ -329,6 +404,17 @@ paths:
                   message:
                     type: string
                     example: Invalid param supplied
+                  violations:
+                    type: array
+                    items:
+                      type: string
+                      example: Flat field area equals or less than 0
+                      xml:
+                        name: violation
+                    xml:
+                      name: violations
+                      wrapped: true
+                    default: []
                   time:
                     type: string
                     format: date-time
@@ -344,7 +430,18 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Not found flat by id error
+                    example: "Not found flat by id: 1"
+                  violations:
+                    type: array
+                    items:
+                      type: string
+                      example: Flat field area equals or less than 0
+                      xml:
+                        name: violation
+                    xml:
+                      name: violations
+                      wrapped: true
+                    default: []
                   time:
                     type: string
                     format: date-time
@@ -361,6 +458,17 @@ paths:
                   message:
                     type: string
                     example: Internal server error
+                  violations:
+                    type: array
+                    items:
+                      type: string
+                      example: Flat field area equals or less than 0
+                      xml:
+                        name: violation
+                    xml:
+                      name: violations
+                      wrapped: true
+                    default: []
                   time:
                     type: string
                     format: date-time
@@ -410,16 +518,46 @@ paths:
                 xml:
                   name: error
                 properties:
-                  messages:
+                  message:
+                    type: string
+                    example: Unprocessable entity
+                  violations:
                     type: array
                     items:
                       type: string
                       example: Flat field area equals or less than 0
                       xml:
-                        name: message
+                        name: violation
                     xml:
-                      name: messages
+                      name: violations
                       wrapped: true
+                  time:
+                    type: string
+                    format: date-time
+                    example: 2024-11-10T00:10:12Z
+        '404':
+          description: Not found flat by param id error
+          content:
+            application/xml:
+              schema:
+                type: object
+                xml:
+                  name: error
+                properties:
+                  message:
+                    type: string
+                    example: "Not found flat by id: 1"
+                  violations:
+                    type: array
+                    items:
+                      type: string
+                      example: Flat field area equals or less than 0
+                      xml:
+                        name: violation
+                    xml:
+                      name: violations
+                      wrapped: true
+                    default: []
                   time:
                     type: string
                     format: date-time
@@ -436,6 +574,17 @@ paths:
                   message:
                     type: string
                     example: Internal server error
+                  violations:
+                    type: array
+                    items:
+                      type: string
+                      example: Flat field area equals or less than 0
+                      xml:
+                        name: violation
+                    xml:
+                      name: violations
+                      wrapped: true
+                    default: []
                   time:
                     type: string
                     format: date-time
@@ -476,7 +625,18 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Not found flat by id error
+                    example: "Not found flat by id: 1"
+                  violations:
+                    type: array
+                    items:
+                      type: string
+                      example: Flat field area equals or less than 0
+                      xml:
+                        name: violation
+                    xml:
+                      name: violations
+                      wrapped: true
+                    default: []
                   time:
                     type: string
                     format: date-time
@@ -493,6 +653,17 @@ paths:
                   message:
                     type: string
                     example: Internal server error
+                  violations:
+                    type: array
+                    items:
+                      type: string
+                      example: Flat field area equals or less than 0
+                      xml:
+                        name: violation
+                    xml:
+                      name: violations
+                      wrapped: true
+                    default: []
                   time:
                     type: string
                     format: date-time
@@ -505,26 +676,29 @@ paths:
                 $ref: '#/components/schemas/error'
 
   # Additional operations
-  /flats/amount/height:
+  /flats/sum/height:
     get:
-      summary: Get amount of fields "height" for all flat objects
-      description: Get amount of fields "height" for all flat objects
+      summary: Get sum of fields "height" for all flat objects
+      description: Get sum of fields "height" for all flat objects
       operationId: getAmountOfFieldsHeight
       tags:
         - Registry
       responses:
         '200':
-          description: Successfully returns amount of fields "height" for all flat objects
+          description: Successfully returns sum of fields "height" for all flat objects
           content:
             application/xml:
               schema:
-                type: integer
+                type: object
                 xml:
                   name: response
-                format: int64
-                nullable: false
-                minimum: 0
-                example: 123
+                properties:
+                  value:
+                    type: integer
+                    format: int64
+                    nullable: false
+                    minimum: 0
+                    example: 123
         '500':
           description: Internal server error
           content:
@@ -537,6 +711,17 @@ paths:
                   message:
                     type: string
                     example: Internal server error
+                  violations:
+                    type: array
+                    items:
+                      type: string
+                      example: Flat field area equals or less than 0
+                      xml:
+                        name: violation
+                    xml:
+                      name: violations
+                      wrapped: true
+                    default: []
                   time:
                     type: string
                     format: date-time
@@ -563,12 +748,17 @@ paths:
               schema:
                 type: object
                 xml:
-                  name: groups
+                  name: groupsWrapper
                 properties:
-                  group:
+                  groups:
                     type: array
+                    xml:
+                      wrapped: true
+                      name: groups
                     items:
                       type: object
+                      xml:
+                        name: group
                       properties:
                         height:
                           type: integer
@@ -596,6 +786,17 @@ paths:
                   message:
                     type: string
                     example: Internal server error
+                  violations:
+                    type: array
+                    items:
+                      type: string
+                      example: Flat field area equals or less than 0
+                      xml:
+                        name: violation
+                    xml:
+                      name: violations
+                      wrapped: true
+                    default: []
                   time:
                     type: string
                     format: date-time
@@ -714,6 +915,14 @@ components:
       type: object
       nullable: false
       properties:
+        id:
+          type: integer
+          nullable: false
+          minimum: 0
+          exclusiveMinimum: true
+          example: 1
+          description: Unique identifier for coordinates, generate automatically
+          readOnly: true
         x:
           type: number
           format: float
@@ -734,6 +943,14 @@ components:
       type: object
       nullable: false
       properties:
+        id:
+          type: integer
+          nullable: false
+          minimum: 0
+          exclusiveMinimum: true
+          example: 1
+          description: Unique identifier for house, generate automatically
+          readOnly: true
         name:
           type: string
           nullable: false
@@ -780,10 +997,22 @@ components:
         message:
           type: string
           example: Not Found
+        violations:
+          type: array
+          items:
+            type: string
+            example: Flat field area equals or less than 0
+            xml:
+              name: violation
+          xml:
+            name: violations
+            wrapped: true
+          default: []
         time:
           type: string
           format: date-time
           example: 2024-11-10T00:10:12Z
       required:
         - message
+        - violations
         - time
